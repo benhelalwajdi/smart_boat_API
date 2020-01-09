@@ -8,6 +8,21 @@ router.get('/', function (req, res, next) {
     res.json({user: 'True'});
 });
 
+router.post('/register', (req, res) => {
+    let password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
+    const queryString = "INSERT INTO users (name, lastname, email, password, phonenumber, adress, username) VALUES (?,?,?,?,?,?,?)";
+    getConnection().query(queryString,
+        [req.body.name, req.body.lastname, req.body.email, password, req.body.phonenumber, req.body.adress, req.body.username],
+        (err, results) => {
+            if (err) {
+                console.log("Failed to insert new client: " + err);
+                res.json({status: false, error: err});
+            }
+            console.log("Inserted a new client with id :" + results.insertId);
+            res.json({status: true});
+        });
+});
+
 
 router.get('/login/:mail/:passwordd', (req, res) => {
     var bool
