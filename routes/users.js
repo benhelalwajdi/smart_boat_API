@@ -31,21 +31,26 @@ router.get('/login/:mail/:passwordd', (req, res) => {
     const userMail = req.params.mail;
     getConnection().query(queryString, [userMail], (err, rows, fields) => {
         if (err) {
-            console.log("Failed to query for users with email : " + err);
+            console.log("Failed to query for users: " + err);
             res.sendStatus(500);
             return
         }
         console.log("User fetched successfully");
         rows.map((row) => {
-            let password = bcrypt.hashSync(req.body.passwordd, bcrypt.genSaltSync(10));
             console.log(row.password);
-            console.log(password);
-            if (bcrypt.compareSync(row.password, password)) {
-                res.json(rows[0]);
+            if (bcrypt.compareSync(req.params.passwordd, row.password)) {
+                console.log("Password MATCH !");
+                bool = true;
             } else {
-                res.json({user: 'login'});
+                console.log(" WRONG Password !");
+                bool = false;
             }
         });
+        if (bool) {
+            res.json(rows[0]);
+        } else {
+            res.json({user: null});
+        }
     });
 });
 
