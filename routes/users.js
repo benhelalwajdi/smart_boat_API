@@ -1,6 +1,7 @@
 var express = require('express');
 var mysql = require('mysql');
 var bcrypt = require('bcrypt-nodejs');
+var multer = require('multer');
 
 var router = express.Router();
 /* GET users listing. */
@@ -8,6 +9,27 @@ router.get('/', function (req, res, next) {
     res.json({user: 'True'});
 });
 
+
+//upload pic to the server ^-^
+var storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/profilePic')
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.fieldname + '-' + Date.now() + '.' + file.originalname)
+    }
+});
+var upload = multer({storage: storage});
+
+module.exports = upload;
+
+router.post('/image',upload.single('image'),(req,res)=>{
+    console.log(req.file.filename);
+});
+
+
+
+//create account
 router.post('/register', (req, res) => {
     let password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
     const queryString = "INSERT INTO users (name, lastname, email, password, phonenumber, adress, username) VALUES (?,?,?,?,?,?,?)";
@@ -24,6 +46,7 @@ router.post('/register', (req, res) => {
 });
 
 
+//login
 router.get('/login/:mail/:passwordd', (req, res) => {
     var bool
     console.log("Trying to login with EMAIL:" + req.params.mail + " PASSWORD:" + req.params.passwordd);
@@ -54,6 +77,8 @@ router.get('/login/:mail/:passwordd', (req, res) => {
     });
 });
 
+
+//get all of users in the data base
 router.get('/Users', function (req, res, next) {
     const queryString = "SELECT * FROM users";
     getConnection().query(queryString, req.params.id, (err, rows, fields) => {
