@@ -42,23 +42,57 @@ router.post('/register', (req, res) => {
             res.json({status: true});
         });
 });
+
 //change password
 router.post('/change_password', (req, res)=>{
-    let password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
+    let newpassword = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
     let id = req.body.id ;
     let oldpassword = req.body.oldpassword ;
 
     //get the user with id
-        /*TODO*/
-
     //compare old password with the password in database
-        /*TODO*/
+    const queryString = "SELECT * FROM users WHERE id = ?";
+    getConnection().query(queryString, [id], (err, rows, fields) => {
+        if (err) {
+            console.log("Failed to query for users: " + err);
+            res.sendStatus(500);
+            return
+        }
+        console.log("User fetched successfully");
+        rows.map((row)=>{
+            console.log(row.password);
+            if(bcrypt.compareSync(oldpassword, row.password)){
+                console.log("Password Match ! ");
+                bool = true;
+            }else {
+                console.log("Wrong Password ! ");
+                bool = false;
+            }
+        });
+        if (bool) {
+            res.json(rows[0]);
+            //change the password
+            const queryString = "update users set password = ? where id = ?";
+            getConnection().query(queryString, [newpassword, req.body.id], (err, results, fields) => {
+                if (err) {
+                    console.log("Failed to update store: " + err);
+                    res.json({status: false, error: err});
+                }
+                console.log("update a  store with id :" + req.body.id);
+                res.json({status: true});
+            })
+        } else {
+            res.json({user: null});
+        }
+    });
+
+
 
 });
 
 //login and get account data
 router.get('/login/:mail/:passwordd', (req, res) => {
-    var bool
+    var bool;
     console.log("Trying to login with EMAIL:" + req.params.mail + " PASSWORD:" + req.params.passwordd);
     const queryString = "SELECT * FROM users WHERE email = ?";
     const userMail = req.params.mail;
@@ -103,7 +137,8 @@ router.get('/Users', function (req, res, next) {
         });
     });
 });
-
+//create account
+    /*TODO*/
 router.post('/register', (req, res) => {
     let password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
     console.log(password);
