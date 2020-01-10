@@ -85,9 +85,6 @@ router.post('/change_password', (req, res)=>{
             res.json({user: null});
         }
     });
-
-
-
 });
 
 //login and get account data
