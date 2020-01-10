@@ -137,12 +137,6 @@ router.get('/Users', function (req, res, next) {
         });
     });
 });
-//create account
-    /*TODO*/
-router.post('/register', (req, res) => {
-    let password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
-    console.log(password);
-});
 
 var pool = mysql.createPool({
     host: '127.0.0.1',
