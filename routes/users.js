@@ -20,9 +20,7 @@ var storage = multer.diskStorage({
     }
 });
 var upload = multer({storage: storage});
-
 module.exports = upload;
-
 router.post('/image',upload.single('image'),(req,res)=>{
     console.log(req.file.filename);
 });
@@ -46,7 +44,7 @@ router.post('/register', (req, res) => {
 });
 
 
-//login
+//login and get account data
 router.get('/login/:mail/:passwordd', (req, res) => {
     var bool
     console.log("Trying to login with EMAIL:" + req.params.mail + " PASSWORD:" + req.params.passwordd);
