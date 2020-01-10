@@ -87,6 +87,12 @@ router.post('/change_password', (req, res)=>{
     });
 });
 
+//Update account data
+router.post('/update', (req, res) => {
+    /*TODO*/
+});
+
+
 //login and get account data
 router.get('/login/:mail/:passwordd', (req, res) => {
     var bool;
