@@ -45,6 +45,7 @@ router.post('/register', (req, res) => {
 
 //change password
 router.post('/change_password', (req, res)=>{
+    var bool ;
     let newpassword = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
     let id = req.body.id ;
     let oldpassword = req.body.oldpassword ;
@@ -70,7 +71,6 @@ router.post('/change_password', (req, res)=>{
             }
         });
         if (bool) {
-            res.json(rows[0]);
             //change the password
             const queryString = "update users set password = ? where id = ?";
             getConnection().query(queryString, [newpassword, req.body.id], (err, results, fields) => {
@@ -80,7 +80,7 @@ router.post('/change_password', (req, res)=>{
                 }
                 console.log("update a  store with id :" + req.body.id);
                 res.json({status: true});
-            })
+            });
         } else {
             res.json({user: null});
         }
