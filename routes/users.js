@@ -42,7 +42,19 @@ router.post('/register', (req, res) => {
             res.json({status: true});
         });
 });
+//change password
+router.post('/change_password', (req, res)=>{
+    let password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
+    let id = req.body.id ;
+    let oldpassword = req.body.oldpassword ;
 
+    //get the user with id
+        /*TODO*/
+
+    //compare old password with the password in database
+        /*TODO*/
+
+});
 
 //login and get account data
 router.get('/login/:mail/:passwordd', (req, res) => {
