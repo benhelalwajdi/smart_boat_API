@@ -87,11 +87,36 @@ router.post('/change_password', (req, res)=>{
     });
 });
 
-//Update account data
+//Update account data  => name, lastname, phonenumber, adress
 router.post('/update', (req, res) => {
     /*TODO*/
+    console.log(
+        "Users with" +
+        "   name : " + req.body.name +
+        " , lastname : " + req.body.lastname +
+        " , phonenumber : " + req.body.phonenumber +
+        " , adress :" + req.body.adress +
+        " , id :"+ req.body.id
+    );
+    const queryString =
+        "update users set " +
+        "name = ? , " +
+        "lastname = ? , " +
+        "adress = ? , " +
+        "phonenumber = ? " +
+        "where id = ?" ;
+    getConnection().query(
+        queryString,
+        [req.body.name, req.body.lastname, req.body.adress ,req.body.phonenumber, req.body.id],
+        (err, results, fields) => {
+        if (err) {
+            console.log("Failed to update store: " + err);
+            res.json({status: false, error: err});
+        }
+        console.log("update a Users with id :" + req.body.id);
+        res.json({status: true});
+    })
 });
-
 
 //login and get account data
 router.get('/login/:mail/:passwordd', (req, res) => {
