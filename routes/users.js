@@ -21,10 +21,27 @@ var storage = multer.diskStorage({
 });
 var upload = multer({storage: storage});
 module.exports = upload;
-router.post('/image',upload.single('image'),(req,res)=>{
+router.post('/image', upload.single('image'), (req, res) => {
     console.log(req.file.filename);
+    const queryString = "SELECT * FROM users WHERE id = ?";
+    getConnection().query(queryString, [id], (err, rows, fields) => {
+        if (err) {
+            console.log("Failed to query for users: " + err);
+            res.sendStatus(500);
+            return;
+        }
+    });
+    console.log("User fetched successfully");
+    const queryString2 = "update users set image = ? where id = ?";
+    getConnection().query(queryString2, [req.file.filename, req.body.id], (err, results, fields) => {
+        if (err) {
+            console.log("Failed to update image: " + err);
+            res.json({status: false, error: err});
+        }
+        console.log("update a image with id :" + req.body.id);
+        res.json({status: true});
+    });
 });
-
 
 
 //create account
@@ -44,11 +61,11 @@ router.post('/register', (req, res) => {
 });
 
 //change password
-router.post('/change_password', (req, res)=>{
-    var bool ;
+router.post('/change_password', (req, res) => {
+    var bool;
     let newpassword = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10));
-    let id = req.body.id ;
-    let oldpassword = req.body.oldpassword ;
+    let id = req.body.id;
+    let oldpassword = req.body.oldpassword;
 
     //get the user with id
     //compare old password with the password in database
@@ -60,12 +77,12 @@ router.post('/change_password', (req, res)=>{
             return
         }
         console.log("User fetched successfully");
-        rows.map((row)=>{
+        rows.map((row) => {
             console.log(row.password);
-            if(bcrypt.compareSync(oldpassword, row.password)){
+            if (bcrypt.compareSync(oldpassword, row.password)) {
                 console.log("Password Match ! ");
                 bool = true;
-            }else {
+            } else {
                 console.log("Wrong Password ! ");
                 bool = false;
             }
@@ -75,10 +92,10 @@ router.post('/change_password', (req, res)=>{
             const queryString = "update users set password = ? where id = ?";
             getConnection().query(queryString, [newpassword, req.body.id], (err, results, fields) => {
                 if (err) {
-                    console.log("Failed to update store: " + err);
+                    console.log("Failed to user store: " + err);
                     res.json({status: false, error: err});
                 }
-                console.log("update a  store with id :" + req.body.id);
+                console.log("update a user with id :" + req.body.id);
                 res.json({status: true});
             });
         } else {
@@ -96,7 +113,7 @@ router.post('/update', (req, res) => {
         " , lastname : " + req.body.lastname +
         " , phonenumber : " + req.body.phonenumber +
         " , adress :" + req.body.adress +
-        " , id :"+ req.body.id
+        " , id :" + req.body.id
     );
     const queryString =
         "update users set " +
@@ -104,18 +121,18 @@ router.post('/update', (req, res) => {
         "lastname = ? , " +
         "adress = ? , " +
         "phonenumber = ? " +
-        "where id = ?" ;
+        "where id = ?";
     getConnection().query(
         queryString,
-        [req.body.name, req.body.lastname, req.body.adress ,req.body.phonenumber, req.body.id],
+        [req.body.name, req.body.lastname, req.body.adress, req.body.phonenumber, req.body.id],
         (err, results, fields) => {
-        if (err) {
-            console.log("Failed to update store: " + err);
-            res.json({status: false, error: err});
-        }
-        console.log("update a Users with id :" + req.body.id);
-        res.json({status: true});
-    })
+            if (err) {
+                console.log("Failed to update store: " + err);
+                res.json({status: false, error: err});
+            }
+            console.log("update a Users with id :" + req.body.id);
+            res.json({status: true});
+        })
 });
 
 //login and get account data
