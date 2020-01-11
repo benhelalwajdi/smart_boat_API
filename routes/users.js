@@ -23,25 +23,33 @@ var upload = multer({storage: storage});
 module.exports = upload;
 router.post('/image', upload.single('image'), (req, res) => {
     console.log(req.file.filename);
+    let id = req.body.id;
     const queryString = "SELECT * FROM users WHERE id = ?";
     getConnection().query(queryString, [id], (err, rows, fields) => {
         if (err) {
             console.log("Failed to query for users: " + err);
             res.sendStatus(500);
-            return;
+        }else{
+            const queryString =
+                "update users set " +
+                "pictures = ?" +
+                "where id = ?";
+            getConnection().query(
+                queryString,
+                [req.file.filename, req.body.id],
+                (err, results, fields) => {
+                    if (err) {
+                        console.log("Failed to update users: " + err);
+                        res.json({status: false, error: err});
+                    }
+                    console.log("update a Users with id :" + req.body.id);
+                    res.json({status: true});
+                })
         }
     });
-    console.log("User fetched successfully");
-    const queryString2 = "update users set image = ? where id = ?";
-    getConnection().query(queryString2, [req.file.filename, req.body.id], (err, results, fields) => {
-        if (err) {
-            console.log("Failed to update image: " + err);
-            res.json({status: false, error: err});
-        }
-        console.log("update a image with id :" + req.body.id);
-        res.json({status: true});
-    });
+
 });
+
 
 
 //create account
@@ -92,7 +100,7 @@ router.post('/change_password', (req, res) => {
             const queryString = "update users set password = ? where id = ?";
             getConnection().query(queryString, [newpassword, req.body.id], (err, results, fields) => {
                 if (err) {
-                    console.log("Failed to user store: " + err);
+                    console.log("Failed to user users: " + err);
                     res.json({status: false, error: err});
                 }
                 console.log("update a user with id :" + req.body.id);
