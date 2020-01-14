@@ -21,6 +21,8 @@ var storage = multer.diskStorage({
 });
 var upload = multer({storage: storage});
 module.exports = upload;
+
+
 router.post('/image', upload.single('image'), (req, res) => {
     console.log(req.file.filename);
     let id = req.body.id;
