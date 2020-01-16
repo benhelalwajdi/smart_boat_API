@@ -188,7 +188,9 @@ router.get('/Users', function (req, res, next) {
         }
         console.log("Users fetched successfully");
         rows.map((row) => {
-            res.json(rows[0]);
+            for (var i = 0; i< rows.length; i++){
+                res.json(rows);
+            }
         });
     });
 });
