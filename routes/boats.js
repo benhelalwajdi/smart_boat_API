@@ -6,7 +6,7 @@ var multer = require('multer');
 var router = express.Router();
 /* GET users listing. */
 router.get('/', function (req, res, next) {
-    res.json({user: 'True'});
+    res.json({boats: 'True'});
 });
 
 var pool = mysql.createPool({
