@@ -27,6 +27,22 @@ router.get('/allboats', function (req, res, next) {
     });
 });
 
+// add new boats on data base :
+
+router.post('/addBoats', function (req, res, next){
+  const queryString = "INSERT INTO boat (price, year, type, class, length, fuel_type, hull_material) VALUES (?,?,?,?,?,?,?)";
+    getConnection().query(queryString,
+        [req.body.price, req.body.year, req.body.type, req.body.class, req.body.length, req.body.fuel_type, req.body.hull_material],
+        (err, results) => {
+            if (err) {
+                console.log("Failed to add new boat: " + err);
+                res.json({status: false, error: err});
+            }
+            console.log("Inserted a new boat with id :" + results.insertId);
+            res.json({status: true});
+        });
+});
+
 
 var pool = mysql.createPool({
     host: '127.0.0.1',
