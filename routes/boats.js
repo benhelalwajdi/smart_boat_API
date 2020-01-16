@@ -38,9 +38,22 @@ router.post('/addBoats', function (req, res, next){
                 console.log("Failed to add new boat: " + err);
                 res.json({status: false, error: err});
             }
-            console.log("Inserted a new boat with id :" + results.insertId);
+            console.log("Inserted a new boat with id: " + results.insertId);
             res.json({status: true});
         });
+});
+
+// get boat with id
+router.get('/:id', (req, res) => {
+    const queryString = "SELECT * FROM boat WHERE id = ?";
+    getConnection(queryString, [req.params.id], (err, rows, fields) => {
+        if (err) {
+            console.log("Failed to query for boat by ID" + err);
+            res.json({status: false, error: err});
+        }
+        console.log("Boat fetched by ID successfully");
+        res.json(rows[0])
+    });
 });
 
 
