@@ -56,6 +56,19 @@ router.get('/:id', (req, res) => {
     });
 });
 
+// get boat with id user
+router.get('byuser/:idUser', (req, res) => {
+    const queryString = "SELECT * FROM boat WHERE id_user = ?";
+    getConnection(queryString, [req.params.idUser], (err, rows, fields) => {
+        if (err) {
+            console.log("Failed to query for boat by ID_User" + err);
+            res.json({status: false, error: err});
+        }
+        console.log("Boat fetched by ID_user successfully");
+        res.json(rows);
+    });
+});
+
 
 var pool = mysql.createPool({
     host: '127.0.0.1',
